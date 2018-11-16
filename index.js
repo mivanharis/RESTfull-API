@@ -7,6 +7,7 @@
 var http = require('http');
 var url = require('url');
 var StringDecoder = require('string_decoder').StringDecoder;
+var config = require('./config');
 
 //THE SERVER SHOULD RESPOND TO ALL REQUEST WITH A STRING
 var server = http.createServer(function(request,response){
@@ -58,7 +59,9 @@ var server = http.createServer(function(request,response){
 
 			//CONVERT THE PAYLOAD TO A STRING
 			var payloadString = JSON.stringify(payload);
+
 			//RETURN THE RESPONSE
+			response.setHeader('Content-Type','application/json');
 			response.writeHead(statusCode);
 			response.end(payloadString);
 
@@ -80,9 +83,9 @@ var server = http.createServer(function(request,response){
 
 });
 
-// START THE SERVERM AND HAVE IT LISTEN ON POT 3000
-server.listen(3000,function(){
-	console.log("The server is listening on port 3000 now");
+// START THE SERVER
+server.listen(config.port,function(){
+	console.log("The server is listening on port "+config.port+" in "+config.envName+" mode!");
 });
 
 // DEFINE THE HANDLERS
