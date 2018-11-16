@@ -5,12 +5,38 @@
 
 //DEPENDENCIES
 var http = require('http');
+var https = require('https');
 var url = require('url');
 var StringDecoder = require('string_decoder').StringDecoder;
 var config = require('./config');
+var fs = require('fs');
 
-//THE SERVER SHOULD RESPOND TO ALL REQUEST WITH A STRING
-var server = http.createServer(function(request,response){
+//INSTANTIATE THE HTTP SERVER
+var httpServer = http.createServer(function(request,response){
+	unifiedServer(request,response);
+});
+
+//START THE HTTP SERVER
+httpServer.listen(config.httpPort,function(){
+	console.log("The server is listening on port "+config.httpPort);
+});
+
+//INSTANTIATE THE HTTP SERVER
+var httpsServerOptions = {
+	'key' : fs.readFileSync('./https/key.pem'),
+	'cert' : fs.readFileSync('./https/cert.pem')
+};
+var httpsServer = https.createServer(httpsServerOptions, function(request,response){
+	unifiedServer(request,response);
+});
+
+//START THE HTTPS SERVER
+httpsServer.listen(config.httpsPort,function(){
+	console.log("The server is listening on port "+config.httpsPort);
+});
+
+//ALL THE SERVER LOGIC FOR BOTH THE HTTP AND HTTPS SERVER
+var unifiedServer = function(request,response){
 
 	//GET THE URL AND PARSE IT
 	var parsedUrl = url.parse(request.url,true);
@@ -69,24 +95,8 @@ var server = http.createServer(function(request,response){
 			console.log('returning this response: ',statusCode,payloadString);
 
 		});
-
-		// //SEND THE RESPONSE
-		// response.end('Hello World!\n');
-
-		//LOG THE REQUEST PATH
-		// console.log('Request received on path: '+trimmedPath+ ' With this method : '+method+' and with these querys string parameters',queryStringObject);
-		// console.log('Request received on this headers :', headers);
-		// console.log('Request received on this payload :', buffer);
 	});
-
-	
-
-});
-
-// START THE SERVER
-server.listen(config.port,function(){
-	console.log("The server is listening on port "+config.port+" in "+config.envName+" mode!");
-});
+};
 
 // DEFINE THE HANDLERS
 var handlers = {};
