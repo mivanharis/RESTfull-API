@@ -101,11 +101,9 @@ var unifiedServer = function(request,response){
 // DEFINE THE HANDLERS
 var handlers = {};
 
-// SAMPLE HANDLERS
-handlers.sample = function(data,callback){
-	// CALLBACK A HTTP SATATUS CODE, AND A PAYLOAD OBJECT
-	callback(406, {'name' : 'sample handler'});
-
+//PING HANDLER
+handlers.ping = function(data,callback){
+	callback(200);
 };
 
 //DEFINE NOT FOUND HANDLERS
@@ -116,5 +114,5 @@ handlers.notFound = function(data,callback){
 
 //DEFINE A REQUEST ROUTER
 var router = {
-	'sample' : handlers.sample
+	'ping' : handlers.ping
 }
